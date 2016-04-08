@@ -8,7 +8,7 @@ var drops = [
   'users', 'roles', 'photos', 'users_roles', 'info',
   'Customer', 'Settings', 'hostnames', 'instances', 'uuid_test',
   'parsed_users', 'tokens', 'thumbnails',
-  'lefts', 'rights', 'lefts_rights', 'organization'
+  'lefts', 'rights', 'lefts_rights', 'organization', 'binary_uuid_test'
 ];
 
 module.exports = function(Bookshelf) {
@@ -137,6 +137,10 @@ module.exports = function(Bookshelf) {
       table.uuid('uuid');
       table.string('name');
     })
+    .createTable('binary_uuid_test', function(table) {
+      table.binary('uuid');
+      table.string('name');
+    })
     .createTable('parsed_users', function(table) {
       table.increments();
       table.string('name');
@@ -146,7 +150,7 @@ module.exports = function(Bookshelf) {
       table.string('parsed_user_id');
       table.string('token');
     })
-    // 
+    //
     .createTable('lefts', function(table) {
       table.increments();
     })

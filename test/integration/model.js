@@ -428,6 +428,44 @@ module.exports = function(bookshelf) {
 
       });
 
+      it('loads objects properly', function() {
+          var uuids = ['d96d40d1-fcc9-11e5-9b8d-87b1687276b9', 'd96d40d2-fcc9-11e5-9b8d-87b1687276b9']
+          var s_uuids = ['d96d40d1-fcc9-11e5-9b8d-87b1687276b9', 'd96d40d2-fcc9-11e5-9b8d-87b1687276b9']
+
+          var SubSite = bookshelf.Model.extend({
+            idAttribute: 'uuid',
+            tableName: 'binary_uuid_test',
+
+            initialize: function() {
+              this.on('saving', this._generateId);
+            },
+
+            _generateId: function (model, attrs, options) {
+              if (model.isNew()) {
+                model.set(model.idAttribute, buildBuffer(uuids.pop()));
+              }
+            }
+          });
+
+          function buildBuffer(string) {
+            return (new Buffer(uuid.parse(string)));
+          }
+
+          var subsite = new SubSite({ name: 'Kuldeep Aggarwal' }),
+              subsite1 = new SubSite({ name: 'Kd Aggarwal' });
+
+          return Promise.all([subsite1.save(), subsite.save()])
+            .then(function() {
+              return SubSite.fetchAll()
+                .then(function(collection) {
+                  expect(_.map(collection.models, function(model) {
+                    return uuid.unparse(model.id);
+                  })).to.eq(s_uuids);
+
+                });
+            });
+        });
+
     });
 
     describe('save', function() {
